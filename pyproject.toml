@@ -1,0 +1,12 @@
+[project]
+name = "abatcher"
+version = "0.1.0"
+description = "Async HTTP request batcher with connection pooling and rate limiting."
+readme = "README.md"
+authors = [{ name = "David Gasquez", email = "davidgasquez@gmail.com" }]
+requires-python = ">=3.12"
+dependencies = ["aiometer>=0.5.0", "httpx[http2]>=0.27.2"]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
