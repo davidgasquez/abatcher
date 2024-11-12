@@ -37,7 +37,11 @@ class AsyncHttpBatcher:
 
         client_kwargs["follow_redirects"] = True
         self.client_kwargs = client_kwargs
-        self.loop = asyncio.get_event_loop()
+        try:
+            self.loop = asyncio.get_event_loop()
+        except RuntimeError:
+            self.loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(self.loop)
 
     async def _fetch(
         self, client: httpx.AsyncClient, request: httpx.Request
