@@ -1,3 +1,7 @@
-from .client import AsyncHttpBatcher
+"""
+Parallel HTTP request batcher with rate limiting, retries, connection pooling, and more.
+"""
 
-__all__ = ["AsyncHttpBatcher"]
+from .main import run
+
+__all__ = ["run"]

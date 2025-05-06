@@ -1,43 +1,53 @@
 # `abatcher`
 
-Async HTTP request batcher with connection pooling and rate limiting.
+Simple parallel HTTP request batcher with rate limiting, retries, connection pooling, and more. The entire API is only 1 function.
 
 ## 🛠️ Usage
 
+Using abatcher should be as simple as:
+
 ```python
-from abatcher import AsyncHttpBatcher
+import abatcher
 
-# Create a batcher with a base URL and optional configuration
-api = AsyncHttpBatcher(
-    base_url="https://httpbin.org",
-    max_concurrent=10,
-    max_per_second=5,
-    max_connections=50,
-    timeout=30,
-    retry_attempts=5,
-)
-
-# Simple GET request
-result = api.get("/get")
-
-print(f"Single request result: {result}")
-
-# Batch of mixed requests
 requests = [
-    # Simple URL
-    "/anything",
-    # URL with params
-    ("/anything", {"query": "test"}),
-    # Full configuration
+    # Simple URL GET request
+    "https://httpbin.org/anything",
+    # Custom request
     {
-        "url": "/post",
+        "url": "https://httpbin.org/post",
         "method": "POST",
         "params": {"name": "Test"},
         "headers": {"X-Custom": "value"},
     },
 ]
 
-results = api.process_batch(requests)
+results = abatcher.run(requests)
 
 print(f"Batch requests results: {results}")
+```
+
+If you need more control, you can also send a custom client.
+
+```python
+import httpx
+import abatcher
+
+custom_client = httpx.AsyncClient(
+    auth=("user", "pass"),
+    timeout=httpx.Timeout(45.0),
+    limits=httpx.Limits(max_connections=100, max_keepalive_connections=20),
+)
+
+results = abatcher.run(
+    requests,
+    client=custom_client,
+    max_concurrent=20,
+    max_per_second=10,
+    cache=True,
+    cache_dir="custom_cache",
+    cache_ttl=3600,
+)
+
+print(f"Batch requests results: {results}")
+
 ```
